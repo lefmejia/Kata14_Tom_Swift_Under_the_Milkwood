@@ -7,6 +7,7 @@ import Control.Monad
 import Data.List
 import Data.Tuple
 import Data.Map (toList, fromListWith, findWithDefault)
+import System.Random
 
 limpiarTexto :: String -> String
 limpiarTexto xs = [ x | x <- xs, x `notElem` ",.?!-:;\"\915\199\214\915\199\170\163" ]
@@ -15,7 +16,8 @@ main :: IO ()
 main = do
     arg <- getArgs
     n <- getFileName arg
-    print $ crearTexto $ crearListaDeTuplas 0 $ eliminarRepetidos $ trigrama (map listaATupla (ngram 2 n))
+    num <- randomRIO (0, 2)
+    print $ crearTexto $ crearListaDeTuplas num $ eliminarRepetidos $ trigrama (map listaATupla (ngram 2 n))
 
 getFileName :: [String] -> IO [String]
 getFileName [nombre] = leerArchivo nombre
@@ -53,7 +55,7 @@ posibilidades n (x:xs)
 
 --Crea una combinacion de tuplas para generar el texto, los primeros 2 elementos se pueden tomar directamente pero los deben ser creados recursivamente
 crearListaDeTuplas :: Eq b => Int -> [((b, b), [b])] -> [(b, b)]
-crearListaDeTuplas n xs = fst (xs!!n) : crearTupla 0 (xs!!n) : tuplaRecursiva (crearTupla 0 (xs!!n)) xs
+crearListaDeTuplas n xs = fst (xs!!n) : crearTupla 0 (xs!!n) : tuplaRecursiva (crearTupla 0 (xs!!n)) xs --crearTupla (fst (randomR (0, length  (snd xs!!n)) 1012529354)) (xs!!n)
 
 -- Continuacion de la creacion de lista de tuplas, agrega tuplas hasta que tuplaDeMap retorna una lista vacia
 tuplaRecursiva :: Eq b => (b, b) -> [((b, b), [b])] -> [(b, b)]
